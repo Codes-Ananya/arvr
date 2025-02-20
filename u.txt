@@ -1,0 +1,207 @@
+1.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Geotransform : MonoBehaviour
+{
+    public float moveSpeed = 5f;
+    public float rotateSpeed = 100f;
+    public float scaleSpeed = 0.5f;
+
+    void Start()
+    {
+        Debug.Log("Use keyboard and mouse");
+    }
+
+    void Update()
+    {
+        //move
+       float moveX = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime; 
+       float moveZ = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime; 
+       transform.Translate(moveX,0,moveZ);
+
+       //rotate
+       if(Input.GetKey(KeyCode.Q))
+       {
+        transform.Rotate(Vector3.up, -rotateSpeed*Time.deltaTime);
+       }
+       if(Input.GetKey(KeyCode.E))
+       {
+        transform.Rotate(Vector3.up, rotateSpeed*Time.deltaTime);
+       }
+
+      //scale
+      if(Input.GetKey(KeyCode.R))
+      {
+        transform.localScale +=Vector3.one*scaleSpeed*Time.deltaTime;
+      }
+      if(Input.GetKey(KeyCode.F))
+      {
+        transform.localScale -=Vector3.one*scaleSpeed*Time.deltaTime;
+      }
+    }
+}
+---------------------------------------------------------------------------
+2.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+using UnityEngine.UI;
+
+public class ChangeProperties : MonoBehaviour
+{
+    public Renderer ObjectRenderer;  // Reference to the Cube's Renderer
+    
+    public Texture[] textures;  // Array of textures
+    public Material[] materials;  // Array of materials
+
+    private int colorIndex = 0;
+    private int textureIndex = 0;
+    private int materialIndex = 0;
+
+    void Start()
+    {
+        // Ensure the Renderer is assigned
+        if (ObjectRenderer == null)
+        {
+            ObjectRenderer = GetComponent<Renderer>();
+        }
+    }
+
+    public void ChangeColor()
+    {
+       
+        ObjectRenderer.material.color = Random.ColorHSV();
+    }
+
+    public void ChangeTexture()
+    {
+        if (textures.Length == 0) return;
+        //textureIndex = (textureIndex + 1) % textures.Length;
+        ObjectRenderer.material.mainTexture = textures[Random.Range(0,textures.Length)];
+    }
+
+    public void ChangeMaterial()
+    {
+        if (materials.Length == 0) return;
+        //materialIndex = (materialIndex + 1) % materials.Length;
+        ObjectRenderer.material = materials[Random.Range(0,materials.Length)];
+    }
+}
+---------------------------------------------------------
+3.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class chan_jump : MonoBehaviour
+{
+   Animator anim;
+   void Start()
+   {
+        anim = GetComponent<Animator>();
+   }
+
+   public void TheJump()
+   {
+    anim.SetTrigger("jump");
+   }
+}
+---------------------------------------------------
+4.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FPSPlayerController : MonoBehaviour
+{
+    public float speed = 5f; // Movement speed
+    public float rotationSpeed = 100f; // Rotation speed
+
+    private CharacterController controller;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>(); // Get the Character Controller
+    }
+
+    void Update()
+    {
+        // Get movement input (Forward/Backward & Left/Right)
+        float moveZ = Input.GetAxis("Vertical");  // W & S for forward/backward
+        float moveX = Input.GetAxis("Horizontal"); // A & D for left/right
+
+        // Move the player based on input
+        Vector3 move = transform.forward * moveZ + transform.right * moveX;
+        controller.Move(move * speed * Time.deltaTime);
+
+        // Rotate Left/Right using A & D
+        float rotation = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
+        transform.Rotate(0, rotation, 0);
+    }
+}
+
+----------------------------------------------------------------------------
+5.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class RayCast : MonoBehaviour
+{
+    public Camera mainCamera; // Reference to the main camera
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0)) // Left mouse click
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition); // Create a ray from the camera
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+            if (hit.collider != null) // If the ray hits something
+            {
+                if (hit.collider.gameObject.CompareTag("Target")) // Check if it's the Target
+                {
+                    // Capture object position
+                    Vector3 targetPosition = hit.collider.gameObject.transform.position;
+                    Debug.Log("Target Hit! Position: " + targetPosition);
+
+                    // Capture distance from camera to target
+                    float distance = Vector3.Distance(mainCamera.transform.position, targetPosition);
+                    Debug.Log("Distance to Target: " + distance + " units");
+
+                    // Change target color on hit
+                    hit.collider.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
+                }
+            }
+        }
+    }
+}
+
+---------------------------------------------------------------------------
+8.using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Video;
+
+public class SpcemanController : MonoBehaviour
+{
+    Animator animator;
+    
+    public VideoPlayer player;
+    // Start is called before the first frame update
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
+    public void MakeJump()
+    {
+        animator.SetTrigger("Jump");
+        player.Play();
+        GetComponent<AudioSource>().Play();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
