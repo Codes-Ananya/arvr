@@ -42,7 +42,10 @@ public class Geotransform : MonoBehaviour
     }
 }
 ---------------------------------------------------------------------------
-2.using System.Collections;
+2.
+cube-script || 3 buttons|| mat in cube
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -89,7 +92,12 @@ public class ChangeProperties : MonoBehaviour
     }
 }
 ---------------------------------------------------------
-3.using System.Collections;
+3.
+parameter-jump
+controller-Chn
+chan_jump
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -107,7 +115,12 @@ public class chan_jump : MonoBehaviour
    }
 }
 ---------------------------------------------------
-4.using System.Collections;
+4.
+windzone|terrain|capsule-fpscontr1501150-empyobj(camrig)-main1501150
+script-fps|charcontr
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -140,63 +153,65 @@ public class FPSPlayerController : MonoBehaviour
 }
 
 ----------------------------------------------------------------------------
-5.using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+5.using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class RayCast : MonoBehaviour
+public class Prog5 : MonoBehaviour
 {
-    public Camera mainCamera; // Reference to the main camera
+    [SerializeField] float speed = 20f;
+    [SerializeField] float distance = 10f;
 
-    void Update()
+    RaycastHit2D hit;
+
+    void Start()
     {
-        if (Input.GetMouseButtonDown(0)) // Left mouse click
+        Debug.Log("Press 'Space' to shoot a raycast");
+    }
+
+    void FixedUpdate()
+    {
+        transform.Rotate(Vector3.forward * speed * Time.deltaTime);
+        hit = Physics2D.Raycast(transform.position, transform.right, distance);
+        if (hit.collider != null)
         {
-            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition); // Create a ray from the camera
-            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-
-            if (hit.collider != null) // If the ray hits something
-            {
-                if (hit.collider.gameObject.CompareTag("Target")) // Check if it's the Target
-                {
-                    // Capture object position
-                    Vector3 targetPosition = hit.collider.gameObject.transform.position;
-                    Debug.Log("Target Hit! Position: " + targetPosition);
-
-                    // Capture distance from camera to target
-                    float distance = Vector3.Distance(mainCamera.transform.position, targetPosition);
-                    Debug.Log("Distance to Target: " + distance + " units");
-
-                    // Change target color on hit
-                    hit.collider.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
-                }
-            }
+            Debug.DrawRay(transform.position, hit.point, Color.red);
+            Debug.Log("Hit: " + hit.collider.name);
+        }
+        else
+        {
+            Debug.DrawRay(transform.position, transform.right * distance, Color.green);
+            Debug.Log("No hit");
         }
     }
-}
 
----------------------------------------------------------------------------
-8.using System.Collections;
+}
+-------------------------------------------------------------------------------------
+6.vuforia|del cam- aR|img targ|
+-------------------------------------------------------------------------------------
+7.aud-cat|controller|Img target-tracked +-
+ GeneralRot-cat-Y-90|GO-timescale|
+ Imgtrg-+ GO
+
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Video;
 
-public class SpcemanController : MonoBehaviour
+public class TimeScaleManager : MonoBehaviour
 {
-    Animator animator;
-    
-    public VideoPlayer player;
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
+        
     }
-
-    public void MakeJump()
+    public void SlowMo()
     {
-        animator.SetTrigger("Jump");
-        player.Play();
-        GetComponent<AudioSource>().Play();
+        Time.timeScale=0.5f;
+    }
+     public void RedoSlowMo()
+    {
+        Time.timeScale=1f;
     }
 
     // Update is called once per frame
@@ -205,3 +220,62 @@ public class SpcemanController : MonoBehaviour
         
     }
 }
+ROTATION
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GeneralRotation : MonoBehaviour
+{
+    [SerializeField] float xAxis;
+    [SerializeField] float yAxis;
+    [SerializeField] float zAxis;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        transform.Rotate(new Vector3(xAxis, yAxis, zAxis) * Time.deltaTime);
+    }
+}
+---------------------------------------------------------------------------------------
+8. remove animator,controller
+quad-vid|animation on spaceman|script on spcm||audio on spcm|button -spc
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Video;
+
+public class SpacemanController : MonoBehaviour
+{
+    Animator animator;
+    AudioSource audioSource;
+   public VideoPlayer videoplayer;
+    // Start is called before the first frame update
+    void Start()
+    {
+        animator=GetComponent<Animator>();
+        audioSource=GetComponent<AudioSource>();
+       
+    }
+    public void MakeJump()
+    {
+        audioSource.Play();
+        animator.SetTrigger("Jump");
+        videoplayer.Play();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}
+---------------------------------------------------------------------
